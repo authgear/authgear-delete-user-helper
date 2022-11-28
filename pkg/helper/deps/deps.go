@@ -47,6 +47,7 @@ var AppRootDependencySet = wire.NewSet(
 	wire.FieldsOf(new(*AppProvider),
 		"RootProvider",
 		"Config",
+		"AppDatabase",
 	),
 )
 

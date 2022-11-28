@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/authgear/authgear-server v0.0.0-20221124103026-4c57b281d273
+	github.com/authgear/graphql-go-relay v0.0.0-20201016065100-df672205b892
 	github.com/getsentry/sentry-go v0.13.0
 	github.com/google/wire v0.5.0
 	github.com/joho/godotenv v1.4.0
@@ -17,7 +18,6 @@ require (
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
 	github.com/Masterminds/squirrel v1.5.3 // indirect
 	github.com/abadojack/whatlanggo v1.0.1 // indirect
-	github.com/authgear/graphql-go-relay v0.0.0-20201016065100-df672205b892 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/boombuler/barcode v1.0.1 // indirect

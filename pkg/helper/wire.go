@@ -10,6 +10,7 @@ import (
 	"github.com/google/wire"
 
 	"github.com/authgear/authgear-delete-user-helper/pkg/helper/deps"
+	"github.com/authgear/authgear-delete-user-helper/pkg/helper/handler"
 	adminauthz "github.com/authgear/authgear-server/pkg/lib/admin/authz"
 	"github.com/authgear/authgear-server/pkg/lib/config"
 	"github.com/authgear/authgear-server/pkg/lib/healthz"
@@ -52,5 +53,12 @@ func newAuthorizationMiddleware(p *deps.RequestProvider, auth config.AdminAPIAut
 	panic(wire.Build(
 		DependencySet,
 		wire.Bind(new(httproute.Middleware), new(*adminauthz.Middleware)),
+	))
+}
+
+func newSearchUserHandler(p *deps.RequestProvider) http.Handler {
+	panic(wire.Build(
+		DependencySet,
+		wire.Bind(new(http.Handler), new(*handler.SearchUserHandler)),
 	))
 }

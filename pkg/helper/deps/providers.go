@@ -9,6 +9,7 @@ import (
 	"github.com/authgear/authgear-server/pkg/lib/config"
 	"github.com/authgear/authgear-server/pkg/lib/config/configsource"
 	"github.com/authgear/authgear-server/pkg/lib/infra/db"
+	"github.com/authgear/authgear-server/pkg/lib/infra/db/appdb"
 	"github.com/authgear/authgear-server/pkg/lib/infra/redis"
 	"github.com/authgear/authgear-server/pkg/util/httproute"
 	"github.com/authgear/authgear-server/pkg/util/log"
@@ -73,11 +74,19 @@ func (p *RootProvider) NewAppProvider(ctx context.Context, appCtx *config.AppCon
 		sentry.NewLogHookFromContext(ctx),
 	)
 	loggerFactory.DefaultFields["app"] = cfg.AppConfig.ID
+	appDatabase := appdb.NewHandle(
+		ctx,
+		p.DatabasePool,
+		&p.EnvironmentConfig.DatabaseConfig,
+		cfg.SecretConfig.LookupData(config.DatabaseCredentialsKey).(*config.DatabaseCredentials),
+		loggerFactory,
+	)
 	provider := &AppProvider{
 		RootProvider:  p,
 		Context:       ctx,
 		Config:        cfg,
 		LoggerFactory: loggerFactory,
+		AppDatabase:   appDatabase,
 	}
 	return provider
 }
@@ -117,6 +126,7 @@ type AppProvider struct {
 	Context       context.Context
 	Config        *config.Config
 	LoggerFactory *log.Factory
+	AppDatabase   *appdb.Handle
 }
 
 func (p *AppProvider) NewRequestProvider(r *http.Request) *RequestProvider {

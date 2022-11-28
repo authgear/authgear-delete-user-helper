@@ -9,14 +9,17 @@ package helper
 import (
 	"context"
 	"github.com/authgear/authgear-delete-user-helper/pkg/helper/deps"
+	"github.com/authgear/authgear-delete-user-helper/pkg/helper/handler"
 	"github.com/authgear/authgear-server/pkg/lib/admin/authz"
 	"github.com/authgear/authgear-server/pkg/lib/config"
 	deps2 "github.com/authgear/authgear-server/pkg/lib/deps"
 	"github.com/authgear/authgear-server/pkg/lib/healthz"
+	"github.com/authgear/authgear-server/pkg/lib/infra/db/appdb"
 	"github.com/authgear/authgear-server/pkg/lib/infra/db/globaldb"
 	"github.com/authgear/authgear-server/pkg/lib/infra/middleware"
 	"github.com/authgear/authgear-server/pkg/util/clock"
 	"github.com/authgear/authgear-server/pkg/util/httproute"
+	"github.com/authgear/authgear-server/pkg/util/httputil"
 	"net/http"
 )
 
@@ -89,3 +92,30 @@ func newAuthorizationMiddleware(p *deps.RequestProvider, auth config.AdminAPIAut
 var (
 	_wireSystemClockValue = clock.NewSystemClock()
 )
+
+func newSearchUserHandler(p *deps.RequestProvider) http.Handler {
+	appProvider := p.AppProvider
+	handle := appProvider.AppDatabase
+	rootProvider := appProvider.RootProvider
+	factory := rootProvider.LoggerFactory
+	jsonResponseWriterLogger := httputil.NewJSONResponseWriterLogger(factory)
+	jsonResponseWriter := &httputil.JSONResponseWriter{
+		Logger: jsonResponseWriterLogger,
+	}
+	configConfig := appProvider.Config
+	secretConfig := configConfig.SecretConfig
+	databaseCredentials := deps2.ProvideDatabaseCredentials(secretConfig)
+	appConfig := configConfig.AppConfig
+	appID := appConfig.ID
+	sqlBuilderApp := appdb.NewSQLBuilderApp(databaseCredentials, appID)
+	request := p.Request
+	contextContext := deps2.ProvideRequestContext(request)
+	sqlExecutor := appdb.NewSQLExecutor(contextContext, handle)
+	searchUserHandler := &handler.SearchUserHandler{
+		AppDatabase: handle,
+		JSON:        jsonResponseWriter,
+		SQLBuilder:  sqlBuilderApp,
+		SQLExecutor: sqlExecutor,
+	}
+	return searchUserHandler
+}

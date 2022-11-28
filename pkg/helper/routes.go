@@ -2,6 +2,7 @@ package helper
 
 import (
 	"github.com/authgear/authgear-delete-user-helper/pkg/helper/deps"
+	"github.com/authgear/authgear-delete-user-helper/pkg/helper/handler"
 	"github.com/authgear/authgear-server/pkg/lib/config"
 	"github.com/authgear/authgear-server/pkg/lib/config/configsource"
 	"github.com/authgear/authgear-server/pkg/util/httproute"
@@ -44,10 +45,9 @@ func NewRouter(p *deps.RootProvider, configSource *configsource.ConfigSource, au
 		}),
 	)
 
-	// route := httproute.Route{Middleware: chain}
-	_ = httproute.Route{Middleware: chain}
+	route := httproute.Route{Middleware: chain}
 
-	//router.AddRoutes(p.Handler(newGraphQLHandler), transport.ConfigureGraphQLRoute(route)...)
+	router.AddRoutes(p.Handler(newSearchUserHandler), handler.ConfigureSearchUserRoute(route))
 
 	return router
 }
