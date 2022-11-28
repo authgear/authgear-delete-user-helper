@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - '*'
+    - '!gh-pages'
+    tags:
+    - '*'
+  pull_request:
+    branches:
+    - '*'
+    - '!gh-pages'
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-go@v3
+      with:
+        go-version: "1.19.2"
+    - run: make vendor
+    - run: make check-tidy
+      if: ${{ !cancelled() }}
+
+  image:
+    runs-on: ubuntu-20.04
+    needs: test
+    steps:
+    - uses: actions/checkout@v3
+    - run: make build-image
+    - uses: docker/login-action@v2
+      if: ${{ github.repository == 'authgear/authgear-delete-user-helper' && github.event_name == 'push' }}
+      with:
+        registry: quay.io
+        username: ${{ secrets.QUAY_USERNAME }}
+        password: ${{ secrets.QUAY_ROBOT_TOKEN }}
+    - run: make push-image
+      if: ${{ github.repository == 'authgear/authgear-delete-user-helper' && github.event_name == 'push' }}
