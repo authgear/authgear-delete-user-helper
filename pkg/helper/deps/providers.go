@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	getsentry "github.com/getsentry/sentry-go"
+	"github.com/spf13/afero"
 
 	"github.com/authgear/authgear-server/pkg/lib/config"
 	"github.com/authgear/authgear-server/pkg/lib/config/configsource"
@@ -16,6 +17,22 @@ import (
 	"github.com/authgear/authgear-server/pkg/util/resource"
 	"github.com/authgear/authgear-server/pkg/util/sentry"
 )
+
+func NewManager(registry *resource.Registry, customResourceDir string) *resource.Manager {
+	var fs []resource.Fs
+	if customResourceDir != "" {
+		fs = append(fs,
+			resource.LeveledAferoFs{
+				Fs:      afero.NewBasePathFs(afero.OsFs{}, customResourceDir),
+				FsLevel: resource.FsLevelCustom,
+			},
+		)
+	}
+	return &resource.Manager{
+		Registry: registry.Clone(),
+		Fs:       fs,
+	}
+}
 
 type RootProvider struct {
 	EnvironmentConfig  *config.EnvironmentConfig
@@ -30,6 +47,7 @@ type RootProvider struct {
 func NewRootProvider(
 	cfg *config.EnvironmentConfig,
 	configSourceConfig *configsource.Config,
+	customResourceDirectory string,
 ) (*RootProvider, error) {
 	logLevel, err := log.ParseLevel(cfg.LogLevel)
 	if err != nil {
@@ -50,9 +68,9 @@ func NewRootProvider(
 	dbPool := db.NewPool()
 	redisPool := redis.NewPool()
 
-	resourceManager := resource.NewManager(
+	resourceManager := NewManager(
 		resource.DefaultRegistry,
-		nil,
+		customResourceDirectory,
 	)
 
 	return &RootProvider{

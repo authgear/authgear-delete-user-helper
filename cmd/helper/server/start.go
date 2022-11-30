@@ -18,6 +18,7 @@ func Start() error {
 	p, err := helperdeps.NewRootProvider(
 		cfg.EnvironmentConfig,
 		cfg.ConfigSource,
+		cfg.CustomResourceDirectory,
 	)
 	if err != nil {
 		golog.Fatalf("failed to setup server: %v", err)

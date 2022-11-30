@@ -19,6 +19,9 @@ type Config struct {
 	// ConfigSource configures the source of app configurations
 	ConfigSource *configsource.Config `envconfig:"CONFIG_SOURCE"`
 
+	// CustomResourceDirectory sets the directory for customized resource files
+	CustomResourceDirectory string `envconfig:"CUSTOM_RESOURCE_DIRECTORY"`
+
 	*config.EnvironmentConfig
 }
 

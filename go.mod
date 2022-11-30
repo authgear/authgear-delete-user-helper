@@ -9,6 +9,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/joho/godotenv v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/spf13/afero v1.9.2
 )
 
 require (
@@ -115,7 +116,6 @@ require (
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/skygeario/go-confusable-homoglyphs v0.0.0-20191212061114-e2b2a60df110 // indirect
 	github.com/soheilhy/cmux v0.1.5 // indirect
-	github.com/spf13/afero v1.9.2 // indirect
 	github.com/spf13/cobra v1.5.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spruceid/siwe-go v0.2.0 // indirect
