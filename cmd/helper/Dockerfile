@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     libicu-dev \
     libmagic-dev \
+    && apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
@@ -31,6 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     mime-support \
     tzdata \
+    && apt-get upgrade -y \
     && rm -rf /var/lib/apt/lists/*
 RUN update-ca-certificates
 COPY --from=stage1 /src/authgear-delete-user-helper /usr/local/bin/
