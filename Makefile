@@ -8,7 +8,8 @@ start:
 vendor:
 	curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $$(go env GOPATH)/bin v1.50.1
 	go mod download
-	go install github.com/google/wire/cmd/wire@v0.5.0
+	go install github.com/google/wire/cmd/wire
+	go install golang.org/x/vuln/cmd/govulncheck@latest
 
 .PHONY: generate
 generate:
@@ -17,6 +18,10 @@ generate:
 .PHONY: fmt
 fmt:
 	go fmt ./...
+
+.PHONY: govulncheck
+govulncheck:
+	govulncheck -show traces,version,verbose ./...
 
 .PHONY: build
 build:
