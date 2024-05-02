@@ -7,6 +7,7 @@ import (
 	helper "github.com/authgear/authgear-delete-user-helper/pkg/helper"
 	helperdeps "github.com/authgear/authgear-delete-user-helper/pkg/helper/deps"
 	"github.com/authgear/authgear-server/pkg/util/server"
+	"github.com/authgear/authgear-server/pkg/util/signalutil"
 )
 
 func Start() error {
@@ -38,8 +39,8 @@ func Start() error {
 		logger.WithError(err).Fatal("failed to parse admin API server listen address")
 	}
 
-	specs := []server.Spec{
-		{
+	specs := []signalutil.Daemon{
+		server.NewSpec(&server.Spec{
 			Name:          "Delete User Helper",
 			ListenAddress: u.Host,
 			Handler: helper.NewRouter(
@@ -47,9 +48,9 @@ func Start() error {
 				configSrcController.GetConfigSource(),
 				cfg.AdminAPIAuth,
 			),
-		},
+		}),
 	}
 
-	server.Start(logger, specs)
+	signalutil.Start(logger, specs...)
 	return nil
 }
