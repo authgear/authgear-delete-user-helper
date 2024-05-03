@@ -1,5 +1,5 @@
 # Stage 1: Build the Go binary
-FROM golang:1.21.9-bullseye as stage1
+FROM golang:1.21.9-bookworm as stage1
 
 # Install build time C dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -20,7 +20,7 @@ RUN make build
 # RUN readelf -d ./authgear | grep 'There is no dynamic section in this file'
 
 # Stage 3: Prepare the actual fs we use to run the program
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 WORKDIR /app
 # /etc/mime.types (mime-support)
 # /usr/share/ca-certificates/*/* (ca-certificates)
